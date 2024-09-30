@@ -16,7 +16,6 @@ struct ContentView: View {
             Text("Hello, Group Members :)")
             Text("Hello! Xiaoya is here")
             Text("Hello! Mathew is here")
-            Text("Merge branch to main from xcode")
         }
         .padding()
     }
