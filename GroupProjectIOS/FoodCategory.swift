@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import FirebaseFirestore
+
+struct FoodCategory: Identifiable, Codable, Hashable {
+    @DocumentID var id: String?
+    var name: String
+    var imageName : String
+}
+
