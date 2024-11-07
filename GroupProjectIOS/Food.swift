@@ -6,3 +6,14 @@
 //
 
 import Foundation
+import FirebaseDatabase
+import FirebaseFirestore
+
+struct Food : Identifiable, Codable {
+    
+    @DocumentID var id: String?
+    var name : String
+    var quantity: Int
+    var expirationDate: Date
+    var category: String
+}
