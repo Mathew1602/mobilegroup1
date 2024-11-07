@@ -119,8 +119,8 @@ class FoodViewModel : ObservableObject {
         }
 
         
-        // Set trigger to 5 seconds for testing
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        // Set trigger to 10 seconds for testing
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
             let request = UNNotificationRequest(identifier: "\(foodName)_testReminder", content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
