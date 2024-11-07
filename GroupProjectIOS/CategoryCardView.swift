@@ -8,11 +8,30 @@
 import SwiftUI
 
 struct CategoryCardView: View {
+    var category: FoodCategory
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Image(category.imageName)
+                .resizable()
+                .frame(width: 80, height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            
+            Text(category.name)
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding()
+        }
+        .frame(width: 170, height: 170)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray, lineWidth: 0.5)
+        )
+        .cornerRadius(12)
+//        .shadow(radius: 2)
     }
 }
 
 #Preview {
-    CategoryCardView()
+    CategoryCardView(category: FoodCategory(name: "Default Category", imageName: "image"))
 }
