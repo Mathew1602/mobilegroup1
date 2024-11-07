@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
+    @AppStorage("isDarkMode") private var isDarkMode = false
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+        NavigationStack{
+            
+            VStack {
+                Toggle("Enable Dark Mode", isOn: $isDarkMode)
+                    .padding()
+                Spacer()
+            }
+            .preferredColorScheme(isDarkMode ? .dark : .light)
+            .navigationTitle("Settings")
+        }
     }
 }
 
 #Preview {
     SettingsView()
+        .environmentObject(FoodCategoryViewModel())
+        .environmentObject(FoodViewModel())
 }
