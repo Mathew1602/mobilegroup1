@@ -32,7 +32,7 @@ struct CategoryDetailsView: View {
                         .frame(width: 150, height: 150)
                         .foregroundColor(.secondary)
                     
-                    Text("0 items found.")
+                    Text("0 item found.")
                         .font(.headline)
                         .foregroundColor(.secondary)
                         .padding()

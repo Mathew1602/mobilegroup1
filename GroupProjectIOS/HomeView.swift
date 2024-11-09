@@ -43,7 +43,7 @@ struct HomeView: View {
                             Image(imageName)
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 250, height: 150) // Adjust width/height as needed
+                                .frame(width: 250, height: 150)
                                 .clipped()
                                 .cornerRadius(10)
                                 .shadow(radius: 4)
@@ -73,7 +73,7 @@ struct HomeView: View {
             }
         }
         .searchable(text: $searchText,
-                    placement: .navigationBarDrawer(displayMode: .always)) // MUST have the placement attribute, or else the searchbar will disappear after navigation back from CategoryDetailsView!!!😠
+                    placement: .navigationBarDrawer(displayMode: .always)) // MUST have the placement attribute, or else the searchbar will disappear after navigating back from CategoryDetailsView!!!😠
     }
 }
 
