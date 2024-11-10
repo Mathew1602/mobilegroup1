@@ -70,23 +70,23 @@ class FoodCategoryViewModel: ObservableObject {
     }
     
     // Check duplicates
-    func checkCategory(_ category: FoodCategory) {
-        // Check if the category already exists in Firestore by its name
-        db.whereField("name", isEqualTo: category.name).getDocuments { (snapshot, error) in
-            if let error = error {
-                print("Error checking category existence: \(error)")
-                return
-            }
-            
-            if let snapshot = snapshot, snapshot.isEmpty {
-                // Category does not exist, so add it
-                self.addCategory(category)
-            } else {
-                // Category already exists
-                print("Category \(category.name) already exists in Firestore.")
-            }
-        }
-    }
+//    func checkCategory(_ category: FoodCategory) {
+//        // Check if the category already exists in Firestore by its name
+//        db.whereField("name", isEqualTo: category.name).getDocuments { (snapshot, error) in
+//            if let error = error {
+//                print("Error checking category existence: \(error)")
+//                return
+//            }
+//            
+//            if let snapshot = snapshot, snapshot.isEmpty {
+//                // Category does not exist, so add it
+//                self.addCategory(category)
+//            } else {
+//                // Category already exists
+//                print("Category \(category.name) already exists in Firestore.")
+//            }
+//        }
+//    }
     
     // Add
     func addCategory(_ category: FoodCategory) {
