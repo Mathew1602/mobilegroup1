@@ -47,6 +47,9 @@ struct GroupProjectIOSApp: App {
                     .tabItem{
                         Label("Search", systemImage: "magnifyingglass")
                     }
+                NearestGroceryView().tabItem{
+                    Label("List", systemImage: "map")
+                }
 
                 SettingsView()
                     .tabItem {
