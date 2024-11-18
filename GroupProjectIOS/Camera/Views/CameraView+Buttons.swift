@@ -11,10 +11,14 @@ extension CameraView {
 
     var capturePhotoButton: some View {
         Button {
-            #if targetEnvironment(simulator)
-            print("Camera is not available on the simulator.")
-            return
-            #endif
+            //Code to prevent simulator from crashing
+            //because camera is not avaiable
+            if #available(iOS 15, *) {
+                #if targetEnvironment(simulator)
+                print("Camera is not available on the simulator.")
+                return
+                #endif
+            }
             switch VM.photoCaptureState {
             case .notStarted: // only take photo when photo capture process has not yet started
                 VM.takePic()
