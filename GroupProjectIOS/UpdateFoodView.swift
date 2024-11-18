@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 struct UpdateFoodView: View {
     
@@ -14,6 +15,9 @@ struct UpdateFoodView: View {
     
     @State var food: Food
     @State var showAlert = false
+    @State var image: UIImage? = nil
+    @State var isCameraPresented = false
+    @State var isFetchingImage = true
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -22,12 +26,29 @@ struct UpdateFoodView: View {
     }()
     
     var body: some View {
-        
-        NavigationStack{
-            
-            VStack{
+        NavigationStack {
+            VStack {
+                if isFetchingImage {
+                    ProgressView("Loading...")
+                        .padding()
+                } else {
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 200, height: 200)
+                    } else {
+                        Button("Take a Picture") {
+                            isCameraPresented = true
+                        }
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
+                }
+                
                 Form {
-                        
                     TextField("Name", text: $food.name)
                     
                     Stepper(value: $food.quantity, in: 1...100) {
@@ -46,24 +67,50 @@ struct UpdateFoodView: View {
                         .padding(.vertical)
                 }
                 
-                Button("Save Changes"){
-                    foodViewModel.updateFood(food)
-                    showAlert = true
+                Button(action: {
+                    if let image = image {
+                        foodViewModel.uploadImage(image, for: food) { imageName in
+                           
+                            food.imageName = imageName
+                            foodViewModel.updateFood(food)
+                            showAlert = true
+                        }
+                    } else {
+                        foodViewModel.updateFood(food)
+                        showAlert = true
+                    }
+                }) {
+                    Text("Save Changes")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
-                .frame(maxWidth: .infinity)
-                .padding() // For button text
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                .padding(.horizontal) // For button itself
+                .padding(.horizontal)
                 .alert("Successfully Updated.", isPresented: $showAlert) {
-                    Button("OK", role: .cancel){}
+                    Button("OK", role: .cancel) {}
                 }
             }
             .navigationTitle("\(food.name)")
             .padding(.bottom, 20)
-            Spacer()
-            
+            .onAppear {
+                foodViewModel.fetchImage(for: food) { fetchedImage in
+                    if let fetchedImage = fetchedImage {
+                        self.image = fetchedImage
+                    }
+                    isFetchingImage = false
+                }
+            }
+            .sheet(isPresented: $isCameraPresented) {
+                CameraView(isPresented: $isCameraPresented, imageData: Binding(get: {
+                    image?.jpegData(compressionQuality: 0.8)
+                }, set: { newData in
+                    if let newData = newData, let newImage = UIImage(data: newData) {
+                        self.image = newImage
+                    }
+                }))
+            }
         }
     }
 }
