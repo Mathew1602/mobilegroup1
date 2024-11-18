@@ -18,9 +18,23 @@
 		E7886E6E2CA9A16E00776016 /* GroupProjectIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GroupProjectIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E76016382CEBD43700BCCE1F /* Exceptions for "GroupProjectIOS" folder in "GroupProjectIOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AddFoodView.swift,
+				CameraView.swift,
+			);
+			target = E7886E6D2CA9A16E00776016 /* GroupProjectIOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E7886E702CA9A16E00776016 /* GroupProjectIOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E76016382CEBD43700BCCE1F /* Exceptions for "GroupProjectIOS" folder in "GroupProjectIOS" target */,
+			);
 			path = GroupProjectIOS;
 			sourceTree = "<group>";
 		};
