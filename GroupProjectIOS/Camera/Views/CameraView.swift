@@ -33,10 +33,18 @@ public struct CameraView: View {
             cameraAndControlView
         }
         .onAppear {
+        #if targetEnvironment(simulator)
+        print("Camera is not available on the simulator.")
+        return
+        #endif
             VM.requestAccessAndSetup()
             VM.resumeSession()
         }
         .onDisappear {
+        #if targetEnvironment(simulator)
+        print("Camera is not available on the simulator.")
+        return
+        #endif
             VM.stopSession()
         }
         .toolbar(.hidden, for: .navigationBar)

@@ -51,6 +51,10 @@ class CameraViewModel: NSObject {
 
     
     func requestAccessAndSetup() {
+        #if targetEnvironment(simulator)
+        print("Camera is not available on the simulator.")
+        return
+        #endif
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { didAllow in
