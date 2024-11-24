@@ -22,8 +22,8 @@
 		E76016382CEBD43700BCCE1F /* Exceptions for "GroupProjectIOS" folder in "GroupProjectIOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AddFoodView.swift,
 				CameraView.swift,
+				"Preview Content/AddFoodView.swift",
 			);
 			target = E7886E6D2CA9A16E00776016 /* GroupProjectIOS */;
 		};

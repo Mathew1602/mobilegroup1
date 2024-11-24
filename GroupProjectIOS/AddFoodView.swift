@@ -9,7 +9,6 @@ import SwiftUI
 import FirebaseStorage
 
 struct AddFoodView: View {
-    
     @EnvironmentObject var foodViewModel: FoodViewModel
     @EnvironmentObject var foodCategoryViewModel: FoodCategoryViewModel
     
@@ -21,6 +20,7 @@ struct AddFoodView: View {
     @State private var alertMessage = ""
     @State private var image: UIImage? = nil
     @State private var isCameraPresented = false
+    @State private var isPhotoPickerPresented = false
     
     var body: some View {
         NavigationStack {
@@ -31,13 +31,19 @@ struct AddFoodView: View {
                         .scaledToFit()
                         .frame(width: 200, height: 200)
                 }
-                Button("Take a Picture") {
-                    isCameraPresented = true
+                HStack(spacing: 20){
+                    Button() {
+                        isCameraPresented = true
+                    }label: {
+                        Label("Camera", systemImage: "camera")
+                    }
+                    Button() {
+                        isPhotoPickerPresented = true
+                    }
+                    label: {
+                        Label("Photos", systemImage: "photo")
+                    }
                 }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
                 
                 Form {
                     TextField("Name", text: $name)
@@ -83,6 +89,9 @@ struct AddFoodView: View {
                         self.image = newImage
                     }
                 }))
+            }
+            .sheet(isPresented: $isPhotoPickerPresented) {
+                PhotoPickerView(imageData: $image, isPresented: $isPhotoPickerPresented)
             }
             Spacer()
         }
