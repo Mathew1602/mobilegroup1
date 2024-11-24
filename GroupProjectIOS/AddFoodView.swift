@@ -5,6 +5,13 @@
 //  Created by Xiaoya Zou on 2024-11-06.
 //
 
+//
+//  AddFoodView.swift
+//  GroupProjectIOS
+//
+//  Created by Xiaoya Zou on 2024-11-06.
+//
+
 import SwiftUI
 import FirebaseStorage
 
@@ -21,6 +28,7 @@ struct AddFoodView: View {
     @State private var image: UIImage? = nil
     @State private var isCameraPresented = false
     @State private var isPhotoPickerPresented = false
+    @State private var useFoodPrediction: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -31,16 +39,18 @@ struct AddFoodView: View {
                         .scaledToFit()
                         .frame(width: 200, height: 200)
                 }
-                HStack(spacing: 20){
-                    Button() {
+                
+                
+                HStack(spacing: 20) {
+                    Button {
                         isCameraPresented = true
-                    }label: {
+                    } label: {
                         Label("Camera", systemImage: "camera")
                     }
-                    Button() {
+                    
+                    Button {
                         isPhotoPickerPresented = true
-                    }
-                    label: {
+                    } label: {
                         Label("Photos", systemImage: "photo")
                     }
                 }
@@ -62,6 +72,9 @@ struct AddFoodView: View {
                     
                     Toggle("Enable Expiration Notification", isOn: $foodViewModel.isNotificationEnabled)
                         .padding(.vertical)
+                    
+                        Toggle("Use food prediction", isOn: $useFoodPrediction)
+                            .padding(.vertical)
                 }
                 
                 Button(action: {
@@ -87,6 +100,7 @@ struct AddFoodView: View {
                 }, set: { newData in
                     if let newData = newData, let newImage = UIImage(data: newData) {
                         self.image = newImage
+                        handlePrediction()
                     }
                 }))
             }
@@ -94,6 +108,8 @@ struct AddFoodView: View {
                 PhotoPickerView(imageData: $image, isPresented: $isPhotoPickerPresented)
             }
             Spacer()
+        }.onChange(of: image) {
+            handlePrediction()
         }
     }
     
@@ -125,8 +141,27 @@ struct AddFoodView: View {
         name = ""
         quantity = 1
         expirationDate = Date()
-        image = nil 
+        image = nil
+        useFoodPrediction = false
     }
+    
+    func handlePrediction() {
+        guard useFoodPrediction, let image = image else { return }
+        let predictor = CoreMLPrediction()
+        predictor.predictFood(from: image) { predictedClass, confidence in
+            self.name = predictedClass
+            if(confidence >= 68)
+            {
+                self.alertMessage = "Succesfully predicted \(predictedClass) & \(confidence)"
+            }else {
+                self.alertMessage = "Unkown food \(confidence)"
+            }
+            self.showAlert = true
+        }
+    }
+
+    
+
 }
 
 #Preview {

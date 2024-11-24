@@ -12,9 +12,11 @@
 		B2EF268F2CDC0C460080D366 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B2EF268E2CDC0C460080D366 /* FirebaseDatabase */; };
 		B2EF26912CDC0C460080D366 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B2EF26902CDC0C460080D366 /* FirebaseFirestore */; };
 		B2EF26932CDC0C460080D366 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B2EF26922CDC0C460080D366 /* FirebaseStorage */; };
+		E714DFEE2CF3DE87009435BD /* FoodClassifier.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E714DFED2CF3DE87009435BD /* FoodClassifier.mlpackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E714DFED2CF3DE87009435BD /* FoodClassifier.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = FoodClassifier.mlpackage; sourceTree = "<group>"; };
 		E7886E6E2CA9A16E00776016 /* GroupProjectIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GroupProjectIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -59,6 +61,7 @@
 		E7886E652CA9A16E00776016 = {
 			isa = PBXGroup;
 			children = (
+				E714DFED2CF3DE87009435BD /* FoodClassifier.mlpackage */,
 				E7886E702CA9A16E00776016 /* GroupProjectIOS */,
 				E7886E6F2CA9A16E00776016 /* Products */,
 			);
@@ -154,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E714DFEE2CF3DE87009435BD /* FoodClassifier.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
