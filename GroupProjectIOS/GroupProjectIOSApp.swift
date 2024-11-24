@@ -54,11 +54,12 @@ struct GroupProjectIOSApp: App {
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")
                     }
-
+                    /* Fix camera view in tabview if I have time - Mathew
                 CameraViewInTabView(isPresented: .constant(true), imageData: $imageData)
                     .tabItem {
                         Label("Camera", systemImage: "camera")
                     }
+                     */
 
                 SettingsView()
                     .tabItem {

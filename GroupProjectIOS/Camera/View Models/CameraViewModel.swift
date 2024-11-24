@@ -51,6 +51,14 @@ class CameraViewModel: NSObject {
 
     
     func requestAccessAndSetup() {
+        //Code to prevent simulator from crashing
+        //because camera is not avaiable
+        if #available(iOS 15, *) {
+            #if targetEnvironment(simulator)
+            print("Camera is not available on the simulator.")
+            return
+            #endif
+        }
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { didAllow in

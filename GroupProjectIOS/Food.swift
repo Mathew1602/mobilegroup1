@@ -16,4 +16,5 @@ struct Food : Identifiable, Codable {
     var quantity: Int
     var expirationDate: Date
     var category: String
+    var imageName: String?
 }

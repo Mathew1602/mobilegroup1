@@ -12,15 +12,31 @@
 		B2EF268F2CDC0C460080D366 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B2EF268E2CDC0C460080D366 /* FirebaseDatabase */; };
 		B2EF26912CDC0C460080D366 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B2EF26902CDC0C460080D366 /* FirebaseFirestore */; };
 		B2EF26932CDC0C460080D366 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B2EF26922CDC0C460080D366 /* FirebaseStorage */; };
+		E714DFEE2CF3DE87009435BD /* FoodClassifier.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E714DFED2CF3DE87009435BD /* FoodClassifier.mlpackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E714DFED2CF3DE87009435BD /* FoodClassifier.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = FoodClassifier.mlpackage; sourceTree = "<group>"; };
 		E7886E6E2CA9A16E00776016 /* GroupProjectIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GroupProjectIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E76016382CEBD43700BCCE1F /* Exceptions for "GroupProjectIOS" folder in "GroupProjectIOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CameraView.swift,
+				"Preview Content/AddFoodView.swift",
+			);
+			target = E7886E6D2CA9A16E00776016 /* GroupProjectIOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E7886E702CA9A16E00776016 /* GroupProjectIOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E76016382CEBD43700BCCE1F /* Exceptions for "GroupProjectIOS" folder in "GroupProjectIOS" target */,
+			);
 			path = GroupProjectIOS;
 			sourceTree = "<group>";
 		};
@@ -45,6 +61,7 @@
 		E7886E652CA9A16E00776016 = {
 			isa = PBXGroup;
 			children = (
+				E714DFED2CF3DE87009435BD /* FoodClassifier.mlpackage */,
 				E7886E702CA9A16E00776016 /* GroupProjectIOS */,
 				E7886E6F2CA9A16E00776016 /* Products */,
 			);
@@ -140,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E714DFEE2CF3DE87009435BD /* FoodClassifier.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,17 +294,19 @@
 				DEVELOPMENT_TEAM = 95AC3EK6J9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera usage for taking pictures";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mathew.GroupProjectIOS;
+				PRODUCT_BUNDLE_IDENTIFIER = mathew.GroupProjectIO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -305,17 +325,19 @@
 				DEVELOPMENT_TEAM = 95AC3EK6J9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera usage for taking pictures";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mathew.GroupProjectIOS;
+				PRODUCT_BUNDLE_IDENTIFIER = mathew.GroupProjectIO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
