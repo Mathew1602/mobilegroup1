@@ -27,11 +27,15 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
 
         super.init()
         
+        manager.distanceFilter = 50.0 //update location when user changes 50 or more meters from their original position
+        
         //desired acccuracy = best type; manager will figure out what is "best" in given moment and return that to desired accuracy
         manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.delegate = self //this is where all the method shit is
+        manager.delegate = self //this is where all the method stuffs is
         manager.requestWhenInUseAuthorization()//asks user for their location
         manager.requestLocation()//grab location from user
+        
+        manager.startUpdatingLocation() //this tells the application to check if locations' been updated
         
     }
     
@@ -42,8 +46,11 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             print("Location error")
             return
         }
-        print("lat\(location.coordinate.latitude) long\(location.coordinate.longitude)")
-//        region.center = location.coordinate //theoretical
+//        print("lat\(location.coordinate.latitude) long\(location.coordinate.longitude)")
+////        region.center = location.coordinate //theoretical
+        
+        //TODO: everytime the location changes... go to the user's location, most recent one
+        print("\(locations[0].coordinate.latitude), \(locations[0].coordinate.longitude)")
         
     }
     
