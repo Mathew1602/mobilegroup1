@@ -10,17 +10,31 @@ import SwiftUI
 struct SettingsView: View {
     
     @AppStorage("isDarkMode") private var isDarkMode = false
-
+    @AppStorage("useSystemDefault") private var useSystemDefault = true
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         
-        NavigationStack{
+        NavigationStack {
             
             VStack {
-                Toggle("Enable Dark Mode", isOn: $isDarkMode)
+                Toggle("Use System Default theme", isOn: $useSystemDefault)
                     .padding()
+                
+                if !useSystemDefault {
+                    Toggle("Enable Dark Mode", isOn: $isDarkMode)
+                        .padding()
+                }
+                
                 Spacer()
             }
-            .preferredColorScheme(isDarkMode ? .dark : .light)
+            .onAppear {
+                if useSystemDefault {
+                    isDarkMode = (colorScheme == .dark)
+                }
+            }
+            .preferredColorScheme(useSystemDefault ? nil : (isDarkMode ? .dark : .light))
             .navigationTitle("Settings")
         }
     }
