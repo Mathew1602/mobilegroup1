@@ -15,9 +15,6 @@ struct NearestGroceryView: View {
     
     @State var currentLocation : CLLocation?
 
-    //this will be changed by the onChange()
-    @State var region : MKCoordinateRegion = MKCoordinateRegion()
-    
     var body: some View {
         NavigationView{
             VStack{
@@ -34,12 +31,9 @@ struct NearestGroceryView: View {
                             }//end of map
                         
                         //TODO: ON CHANGE !!
+                            //if location changed, so will the region
                         .onChange(of: locationManager.location, initial: true) {
-                            region = MKCoordinateRegion(
-                                center: CLLocationCoordinate2D(latitude: locationManager.location!.coordinate.latitude, longitude:locationManager.location!.coordinate.longitude),
-                                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-                                )
-                            print("\(locationManager.location!.coordinate.latitude )")
+                           camPosition = MapCameraPosition.region(locationManager.region) //this is the zoom level
                             }//end of onChange
 //                        }//end of if for map view
 
@@ -51,8 +45,6 @@ struct NearestGroceryView: View {
                 HStack{
                     List{
                         //for the locations in a given search, grab the first three, show here
-                        
-                        
                         
 //                        Text("Buttons here")
 //                        Text("Buttons here")
@@ -68,7 +60,6 @@ struct NearestGroceryView: View {
                             }
                             print("\(currentLocation!.coordinate.longitude)")
                             print("CAM: \(camPosition)")
-                            print("REGION: \(region.center)")
                         }
                         
                         
@@ -81,19 +72,7 @@ struct NearestGroceryView: View {
             
         }.onAppear()
         {
-            //THIS ONE vv
-//            region = MKCoordinateRegion(
-//                center: CLLocationCoordinate2D(latitude: locationManager.location?.coordinate.latitude ?? 0, longitude:locationManager.location?.coordinate.longitude ?? 0),
-//                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-//                )
-            
-//                region = MKCoordinateRegion(
-//                    center: CLLocationCoordinate2D(latitude: locationManager.location?.coordinate.latitude!, longitude: locationManager.location?.coordinate.longitude!),
-//                    span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05) //zoom into the streets
-//                )
-//                
-//                camPosition = MapCameraPosition.region(region) //this is the zoom level
-            camPosition = MapCameraPosition.region(region) //this is the zoom level
+//            camPosition = MapCameraPosition.region(region) //this is the zoom level
             //do the map search, ask for permissions here
         }.navigationTitle("Nearest Grocery Store")
     }

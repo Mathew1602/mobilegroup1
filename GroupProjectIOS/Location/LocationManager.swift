@@ -24,7 +24,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     
     override init(){
         self.location = CLLocation()
-
+        
         super.init()
         
         manager.distanceFilter = 50.0 //update location when user changes 50 or more meters from their original position
@@ -46,14 +46,17 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             print("Location error")
             return
         }
-//        print("lat\(location.coordinate.latitude) long\(location.coordinate.longitude)")
-////        region.center = location.coordinate //theoretical
         
-        //TODO: everytime the location changes... go to the user's location, most recent one
+        //everytime the location changes... go to the user's location, most recent one
         print("\(locations[locations.count-1].coordinate.latitude), \(locations[locations.count-1].coordinate.longitude)")
         self.location = locations[locations.count-1] //this = publisher variable
         
-    }
+        //this is connected to view's camera -- will change what is counted in this region
+        self.region = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: self.location!.coordinate.latitude, longitude: self.location!.coordinate.longitude),
+            span: MKCoordinateSpan(latitudeDelta:0.05, longitudeDelta: 0.05))
+        
+    }//didUpdateLocations end
     
     //deals with errors
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
