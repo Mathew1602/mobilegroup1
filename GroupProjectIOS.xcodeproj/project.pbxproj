@@ -25,6 +25,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				CameraView.swift,
+				Info.plist,
 				"Preview Content/AddFoodView.swift",
 			);
 			target = E7886E6D2CA9A16E00776016 /* GroupProjectIOS */;
@@ -291,7 +292,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"GroupProjectIOS/Preview Content\"";
-				DEVELOPMENT_TEAM = 95AC3EK6J9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Camera usage for taking pictures";
@@ -322,7 +323,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"GroupProjectIOS/Preview Content\"";
-				DEVELOPMENT_TEAM = 95AC3EK6J9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Camera usage for taking pictures";
