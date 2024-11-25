@@ -50,7 +50,8 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
 ////        region.center = location.coordinate //theoretical
         
         //TODO: everytime the location changes... go to the user's location, most recent one
-        print("\(locations[0].coordinate.latitude), \(locations[0].coordinate.longitude)")
+        print("\(locations[locations.count-1].coordinate.latitude), \(locations[locations.count-1].coordinate.longitude)")
+        self.location = locations[locations.count-1] //this = publisher variable
         
     }
     
