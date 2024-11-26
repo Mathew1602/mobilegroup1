@@ -60,6 +60,12 @@ struct GroupProjectIOSApp: App {
                         Label("Camera", systemImage: "camera")
                     }
                      */
+                
+                NearestGroceryView()
+                    .tabItem {
+                    Label("Find Store", systemImage: "map")
+                }
+                
 
                 SettingsView()
                     .tabItem {
