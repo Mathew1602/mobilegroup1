@@ -60,6 +60,7 @@ struct NearestGroceryView: View {
                             }
                             print("\(currentLocation!.coordinate.longitude)")
                             print("CAM: \(camPosition)")
+                            
                         }
                         
                         
