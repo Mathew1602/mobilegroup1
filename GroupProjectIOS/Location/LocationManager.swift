@@ -144,7 +144,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 do{
                     await self.convertToItem()//convert the new stores into item types
                     //print(self.groceryStoreItems) //testing
-                    //print(getStoreItems()) //testing
+                    print("PRINT - TESTING GET STORE ITEM: \(self.getStoreItems()[0])") //testing
                 }
                 //catch is unreachable
                 
@@ -167,6 +167,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 request.source = MKMapItem(placemark: .init(coordinate: location!.coordinate))
                 request.destination = MKMapItem(placemark: .init(coordinate: placemarker.location!.coordinate))
                 request.transportType = .automobile
+                print("IN GET TIME ROUTE \(request)")
                 
                 let response = try await MKDirections(request: request).calculateETA()
                 time = Int(response.expectedTravelTime / 60) //convert the expected travel time from seconds to minutes
@@ -183,16 +184,42 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     }//end of getCarTimeRoute
     
     
-    func getRoute(){
+    func getRoute(storeNameAddress : String) async -> MKRoute{
+        var route = MKRoute()
+        
+        Task{
+            do{
+                let geoCoder = CLGeocoder()
+                let result = try await geoCoder.geocodeAddressString(storeNameAddress) //gets the store location in geocoder
+                
+                if let placemarker = result.first{
+                    let request = MKDirections.Request()
+                    request.source = MKMapItem(placemark: .init(coordinate: location!.coordinate))
+                    request.destination = MKMapItem(placemark: .init(coordinate: placemarker.location!.coordinate))
+                    request.transportType = .automobile
+                    
+                    print("IN GET ROUTE \(request)")
+                    
+                    let response = try await MKDirections(request: request).calculate()
+                    route = response.routes.first!
+                }//end of first
+            }//end of do
+            catch{
+                print("Error: cannnot get route: \(error)")
+            }
+        }//end of task
+        
         /*calculate the route in a different method -- on specific place selected
-         //                mkRoute = res.routes.first //basically setting the route
+         // mkRoute = res.routes.first //basically setting the route
          //
-         //                if let route = res.routes.first{ //you'll find several routes
-         //                    for step in route.steps{
+         // if let route = res.routes.first{ //you'll find several routes
+         // for step in route.steps{
          //                        print(step.instructions)
          //                        routeSteps.append(RouteStep(step: step.instructions)) //add it to list of steps, in a list
          //                    }//end of for step in route
          //                } */
+        
+        return route
     }//end of getRoute()
     
     /*
@@ -212,7 +239,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             
             //let time = 0;
             let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)")
-            let url = "comgooglemaps://?daddr=48.8566,2.3522)&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
+            let url = "comgooglemaps://?daddr=\(store.placemark.coordinate.latitude),\(store.placemark.coordinate.longitude))&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
             
             let item = LocationListItem(name: name, address: address, coordinate: coordinate, carTime: time, url: url)
             

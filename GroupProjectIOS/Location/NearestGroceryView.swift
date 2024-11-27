@@ -12,6 +12,9 @@ struct NearestGroceryView: View {
     
     @State var selectedLocationItem : LocationListItem? //chose items in a list later
     
+    //route
+    @State var mkRoute : MKRoute? //this is set in getRoute
+
     
     
     var body: some View {
@@ -23,13 +26,21 @@ struct NearestGroceryView: View {
                     //                    if(!(region.center.latitude == 0 && region.center.longitude == 0)){ //add this later
                     Map(position : $camPosition){
                         
+                        //USER
                         UserAnnotation() //shows you, the user, on the application
                         
+                        //LOCATION MARKER
                         //checks if location item exists, if so -- display
-                        if((selectedLocationItem) != nil){
-                            Marker(coordinate: selectedLocationItem!.coordinate){
-                                Text("\(selectedLocationItem?.name ?? "N/A")")
+                        if let locItem = selectedLocationItem{
+                            Marker(coordinate: locItem.coordinate){
+                                Text("\(locItem.name)")
                             }
+                        }//if statement ends
+                        
+                        //ROUTES
+                        if let route = mkRoute{
+                            MapPolyline(route.polyline)
+                                .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
                         }//if statement ends
                         
                     }//end of map
@@ -84,15 +95,22 @@ struct NearestGroceryView: View {
                         .onTapGesture {
                             selectedLocationItem = store
                             //                            print("Selected Location Item: \(store.name)") //location item grabbed test
-                            //TODO: Make the route appear and the location pin
-                            //make location pin based on address of that store
                             
-                            //call getRoute()
-                            
-                            
-                            
-                            
-                        }
+                            Task{
+                                do{
+                                    //TODO: Make the route appear and the location pin
+                                    //make location pin based on address of that store
+                                    mkRoute = try await locationManager.getRoute(storeNameAddress: "\(store.name) \(store.address)")
+                                    print("\(mkRoute ?? MKRoute()) PRINT STATEMENT")
+                                    
+                                    //call getRoute()
+                                }//end of do
+                                catch{
+                                    print("Error: Problem getting route from getRoute(): \(error)")
+                                }//end of catch
+                                
+                            }//end of task
+                        }//end of ontapgesture
                 }//end of list
                 
             }//end of outer vStack
