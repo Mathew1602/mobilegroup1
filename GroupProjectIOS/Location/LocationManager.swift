@@ -177,4 +177,4 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     }
     
     
-}
+}//end of location manager

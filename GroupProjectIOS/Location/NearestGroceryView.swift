@@ -1,9 +1,3 @@
-//
-//  NearestGroceryView.swift
-//  GroupProjectIOS
-//
-//  Created by Audrey Man on 2024-11-11.
-//
 
 import SwiftUI
 import MapKit
@@ -18,13 +12,15 @@ struct NearestGroceryView: View {
     
     //to test LocationList Item
     //@State var exampleItem : LocationListItem = LocationListItem(name: "Example Item", address: "123 Example Street", carTime: 24, url: "http://hello.ca")
-//    @State var selectedLocationItem : LocationListItem //chose items in a list later
+    @State var selectedLocationItem : LocationListItem? //chose items in a list later
+    
+    
     
     var body: some View {
         NavigationView{
             VStack{
                                 
-                VStack {
+                VStack{
                     //if the map is legal -- (0,0) is null island, but highly unlikely someone would look for grocery near null island
                     //                    if(!(region.center.latitude == 0 && region.center.longitude == 0)){ //add this later
                     Map(position : $camPosition){
@@ -40,38 +36,44 @@ struct NearestGroceryView: View {
                     }//end of onChange
                     //                        }//end of if for map view
                     
-                }//end of map VStack
+                }//end of map's VStack
                 .aspectRatio(1.0, contentMode: .fit)
                 .border(.black)
                 
                 //List of locations that will take user to the place they want in Maps
-                HStack{
-                    
-                    List(locationManager.getStoreItems(), id: \.self){store in
-                        VStack{
+                List(locationManager.getStoreItems(), id: \.id){store in
+                    HStack{
+                        VStack(alignment: .leading){
                             Text("\(store.name)").bold()
                             Text("\(store.address)")
-                            Text("Time (by car): \(store.carTimeString())")
-                            Text("\(store.url)")
-                            
-                            HStack{
-                                Button("Directions"){
-                                    //go to apple maps or google maps
-                                }
-                            }.frame(maxWidth: .infinity, alignment: .trailing)//end ofHSTack
-                                .background(.blue)
-                            
+                            Text("\(store.carTimeString())")
+                            //Text("\(store.url)") //this was for testing
+                        }
                         
-                        }.frame(maxWidth: .infinity, alignment: .leading) //end of VStack
+                        Spacer()
                         
-                    }//list end
+                        Button("Directions"){
+                            //go to apple maps or google maps
+                        }
+                        .padding(8)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        
+                        
+                    }.frame(maxWidth: .infinity, alignment: .leading) //end of VStack
+                        .contentShape(RoundedRectangle(cornerRadius: 10)) // Make the whole row tappable
+                        .onTapGesture {
+                            selectedLocationItem = store
+//                            print("Selected Location Item: \(store.name)") //location item grabbed test
+                        }
+                }//end of list
                     
-                }//end of map
             }//end of outer vStack
             .navigationTitle("Nearest Grocery Store")
             
             
-        }.onAppear()
+        }.onAppear() //end of navstack
         {
             //do the map search, ask for permissions here
             locationManager.searchStores() //for the first time

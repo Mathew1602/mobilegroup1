@@ -7,7 +7,9 @@
 
 import Foundation
 
-public struct LocationListItem : Hashable{
+public struct LocationListItem : Hashable, Identifiable{
+    public var id = UUID()
+    
     let name: String
     let address: String
     let carTime : Int //how long in minutes it takes to travel
