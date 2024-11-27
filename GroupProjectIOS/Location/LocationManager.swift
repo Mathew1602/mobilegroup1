@@ -15,10 +15,12 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     
     @Published var location : CLLocation?
     @Published var coordinate : CLLocationCoordinate2D?
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude:43.4561, longitude:-79.7000),//center -> should technically be user, but for sake in purpose is this
-        span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))//span in this case is how much is the barrier between your location and the other to be searched locations
+    @Published var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude:43.4561, longitude:-79.7000),//center -> should technically be user, but for sake in purpose is this
+        span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1) //span in this case is how much is the barrier between your location and the other to be searched locations
+        )
     
-    @Published var MapItems: [MKMapItem] = []
+    @Published var groceryStores: [MKMapItem] = []
     @Published var mkRoute : MKRoute?
 
     let manager = CLLocationManager()
@@ -92,23 +94,53 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     }
 
     
-    func searchLocation(for name : String){
-        var items : [MKMapItem] = []
+    func searchStores(){
+        var storeItems : [MKMapItem] = []
 
         let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = name
+        request.naturalLanguageQuery = "grocery store"
         request.region = region //makes the search specific to the region
         
         let search = MKLocalSearch(request: request) //will find the result of the search
-        search.start{response, error in
+        search.start{ (response, error) in
             guard let res = response else{
-                print("error location not found")
+                print("Error: No grocery store locations found")
+                self.groceryStores = []
                 return
             }
-            print("location found")
-            print(res.mapItems.count)
-            items = res.mapItems
-            self.MapItems = items
+            print("\(res.mapItems.count) stores found")
+            storeItems = res.mapItems
+            
+            //Test stuff:
+            print("\(storeItems[0])") // gives you a MKMapItem response
+            
+            //https://developer.apple.com/documentation/swift/string/split(separator:maxsplits:omittingemptysubsequences:) - string seperator into an array
+            /*
+             MKMapItem: 0x1048f9cb0> {
+                 isCurrentLocation = 0;
+                 name = Safeway;
+                 phoneNumber = "+1 (408) 253-0112";
+                 placemark = "Safeway, 20620 W Homestead Rd, Cupertino, CA 95014, United States @ <+37.33616270,-122.03470590> +/- 0.00m, region CLCircularRegion (identifier:'<+37.33616271,-122.03470590> radius 141.17', center:<+37.33616271,-122.03470590>, radius:141.17m)";
+                 timeZone = "America/Los_Angeles (PST) offset -28800";
+                 url = "https://local.safeway.com/safeway/ca/cupertino/20620-w-homestead-rd.html";
+             }
+             */
+            
+            //seeing how the seperator breaks it down
+            let placemark = "Safeway, 20620 W Homestead Rd, Cupertino, CA 95014, United States @ <+37.33616270,-122.03470590> +/- 0.00m, region CLCircularRegion (identifier:'<+37.33616271,-122.03470590> radius 141.17', center:<+37.33616271,-122.03470590>, radius:141.17m)"
+            let components = placemark.split(separator: ", ")
+
+            print(components)
+
+            
+//            print("\(storeItems[0].url)")
+//            print("\(storeItems[0].isCurrentLocation)")
+//            print("\(storeItems[0].placemark)")
+////            print("\(storeItems[0].alternateIdentifiers)") //not available for iphone 16
+//            print("\(storeItems[0].writableTypeIdentifiersForItemProvider)")
+
+            
+            self.groceryStores = storeItems
         }
         
         }//end of searchLocation
