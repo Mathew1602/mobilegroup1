@@ -31,10 +31,18 @@ struct NearestGroceryView: View {
                     
                     //if location changed, so will the region
                     .onChange(of: locationManager.location, initial: true) {
-                        camPosition = MapCameraPosition.region(locationManager.region) //this is the zoom level
-                        locationManager.searchStores()
+                        Task{
+                            do{
+                            
+                                camPosition = MapCameraPosition.region(locationManager.region) //this is the zoom level
+                                try await locationManager.searchStores()
+
+                            }
+                            //catch is unreachable
+                            
+                        }//end of task
                     }//end of onChange
-                    //                        }//end of if for map view
+                    //}//end of if for map view
                     
                 }//end of map's VStack
                 .aspectRatio(1.0, contentMode: .fit)
@@ -66,6 +74,14 @@ struct NearestGroceryView: View {
                         .onTapGesture {
                             selectedLocationItem = store
 //                            print("Selected Location Item: \(store.name)") //location item grabbed test
+                            //TODO: Make the route appear and the location pin
+                            /*
+                             make location pin based on address of that store
+                             call getRoute()
+                             
+                             */
+                            
+                            
                         }
                 }//end of list
                     
@@ -75,9 +91,14 @@ struct NearestGroceryView: View {
             
         }.onAppear() //end of navstack
         {
-            //do the map search, ask for permissions here
-            locationManager.searchStores() //for the first time
-
+            Task{
+                do{
+                    //do the map search, ask for permissions here
+                    try await locationManager.searchStores() //for the first time
+                }
+                //catch is unreachable
+            }//end of Task
+            
         }
         
     }

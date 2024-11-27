@@ -17,7 +17,7 @@ public struct LocationListItem : Hashable, Identifiable{
     
     
     func carTimeString() -> String{
-        var hours : Int = carTime / 60
+        let hours : Int = carTime / 60
         if hours == 0{
             return "\(carTime) minute(s)"
         }

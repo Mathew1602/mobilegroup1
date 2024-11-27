@@ -15,7 +15,6 @@ import SwiftUICore
 class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     
     @Published var location : CLLocation?
-    @Published var coordinate : CLLocationCoordinate2D?
     @Published var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude:43.4561, longitude:-79.7000),//center -> should technically be user, but for sake in purpose is this
         span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1) //span in this case is how much is the barrier between your location and the other to be searched locations
@@ -49,7 +48,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     //these are from the delegate -- we add the last bits of the implementation
     //deals with updates in location
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else{
+        guard locations.last != nil else{
             print("Location error")
             return
         }
@@ -97,8 +96,12 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         
     }
 
+    /*
+     ADDITIONAL METHODS
+     */
+    
     //what the view calls to search for stores. It searches for stores and adds the results to the variable
-    func searchStores(){
+    func searchStores() async{
         var storeItems : [MKMapItem] = []
 
         let request = MKLocalSearch.Request()
@@ -137,30 +140,81 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             
             self.groceryStores = storeItems
             
-            self.convertToItem()//convert the new stores into item types
-            //print(self.groceryStoreItems) //testing
-            //print(getStoreItems()) //testing
+            Task{
+                do{
+                    await self.convertToItem()//convert the new stores into item types
+                    //print(self.groceryStoreItems) //testing
+                    //print(getStoreItems()) //testing
+                }
+                catch{
+                    print("Error: Could not convert items \(error)")
+                }
+            }//end of Task
+       
 
-
-            
         }//end of search start
         
     }//end of searchLocation
     
+    func getCarTimeRoute(storeNameAddress : String) async -> Int{
+        var time = -1
+
+        do{
+            let geoCoder = CLGeocoder()
+            let result = try await geoCoder.geocodeAddressString(storeNameAddress) //gets the store location in geocoder
+
+            if let placemarker = result.first{
+                let request = MKDirections.Request()
+                request.source = MKMapItem(placemark: .init(coordinate: location!.coordinate))
+                request.destination = MKMapItem(placemark: .init(coordinate: placemarker.location!.coordinate))
+                request.transportType = .automobile
+                
+                let response = try await MKDirections(request: request).calculateETA()
+                time = Int(response.expectedTravelTime / 60) //convert the expected travel time from seconds to minutes
+                print("\(time) minutes for store \(storeNameAddress)")
+                
+            }//end of placemaker
+                        
+        }catch{
+            print("Error, cannot find car route time: \(error)")
+        }
+        
+        return time //if -1, some error occured. else should return in minutes
+        
+    }//end of getCarTimeRoute
+    
+    
+    func getRoute(){        
+        /*calculate the route in a different method -- on specific place selected
+//                mkRoute = res.routes.first //basically setting the route
+//
+//                if let route = res.routes.first{ //you'll find several routes
+//                    for step in route.steps{
+//                        print(step.instructions)
+//                        routeSteps.append(RouteStep(step: step.instructions)) //add it to list of steps, in a list
+//                    }//end of for step in route
+//                } */
+    }//end of getRoute()
+    
+    /*
+     HELPER METHODS -- for the list view
+     */
     
     //takes the list of groceries -- the groceryStores list -- and modifies to make it LocationListItem type
-    private func convertToItem(){
+    private func convertToItem() async{
         for store in groceryStores{
             
             let name = store.name ?? "No Location Name"
             let address = ("\(store.placemark.subThoroughfare ?? "No Street Number") \(store.placemark.thoroughfare ?? "No Street")")
-            let time = 0;
-            //let time = carTime(store) //TODO: When you make the route display, you'll also get the time
+//            let time = 0;
+            let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)") //TODO: When you make the route display, you'll also get the time
             let url = "comgooglemaps://?daddr=48.8566,2.3522)&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
             
             let item = LocationListItem(name: name, address: address, carTime: time, url: url)
             
-            self.groceryStoreItems.append(item)
+            DispatchQueue.main.sync {
+                self.groceryStoreItems.append(item)
+            }
         }//end of for loop
         
     }//covertToItem() ending
