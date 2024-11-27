@@ -8,6 +8,7 @@
 
 import Foundation
 import MapKit
+import SwiftUICore
 
 //copied from LocationServicesDemo, edit for app's usage
 
@@ -20,8 +21,11 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1) //span in this case is how much is the barrier between your location and the other to be searched locations
         )
     
-    @Published var groceryStores: [MKMapItem] = []
+    @Published var groceryStores: [MKMapItem] = [] //does this have to be published?
     @Published var mkRoute : MKRoute?
+    
+    //for convertToItem()
+    @Published var groceryStoreItems : [LocationListItem] = []
 
     let manager = CLLocationManager()
     
@@ -93,7 +97,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         
     }
 
-    
+    //what the view calls to search for stores. It searches for stores and adds the results to the variable
     func searchStores(){
         var storeItems : [MKMapItem] = []
 
@@ -111,11 +115,15 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             print("\(res.mapItems.count) stores found")
             storeItems = res.mapItems
             
-            //Test stuff:
-            print("\(storeItems[0])") // gives you a MKMapItem response
             
-            //https://developer.apple.com/documentation/swift/string/split(separator:maxsplits:omittingemptysubsequences:) - string seperator into an array
             /*
+            //Test stuff:
+            print("\(storeItems[0].placemark)") // gives you a MKMapItem response
+            print(storeItems[0].placemark.thoroughfare)
+            print(storeItems[0].placemark.subThoroughfare)
+
+            //https://developer.apple.com/documentation/swift/string/split(separator:maxsplits:omittingemptysubsequences:) - string seperator into an array
+           
              MKMapItem: 0x1048f9cb0> {
                  isCurrentLocation = 0;
                  name = Safeway;
@@ -126,24 +134,34 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
              }
              */
             
-            //seeing how the seperator breaks it down
-            let placemark = "Safeway, 20620 W Homestead Rd, Cupertino, CA 95014, United States @ <+37.33616270,-122.03470590> +/- 0.00m, region CLCircularRegion (identifier:'<+37.33616271,-122.03470590> radius 141.17', center:<+37.33616271,-122.03470590>, radius:141.17m)"
-            let components = placemark.split(separator: ", ")
-
-            print(components)
-
-            
-//            print("\(storeItems[0].url)")
-//            print("\(storeItems[0].isCurrentLocation)")
-//            print("\(storeItems[0].placemark)")
-////            print("\(storeItems[0].alternateIdentifiers)") //not available for iphone 16
-//            print("\(storeItems[0].writableTypeIdentifiersForItemProvider)")
-
             
             self.groceryStores = storeItems
-        }
+            
+            self.convertToItem()//convert the new stores into item types
+            //print(self.groceryStoreItems) //testing
+
+            
+        }//end of search start
         
-        }//end of searchLocation
+    }//end of searchLocation
+    
+    
+    //takes the list of groceries -- the groceryStores list -- and modifies to make it LocationListItem type
+    func convertToItem(){
+        for store in groceryStores{
+            
+            let name = store.name ?? "No Location Name"
+            let address = ("\(store.placemark.subThoroughfare ?? "No Street Number") \(store.placemark.thoroughfare ?? "No Street")")
+            let time = 0;
+            //let time = carTime(store) //TODO: When you make the route display, you'll also get the time
+            let url = "comgooglemaps://?daddr=48.8566,2.3522)&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
+            
+            let item = LocationListItem(name: name, address: address, carTime: time, url: url)
+            
+            self.groceryStoreItems.append(item)
+        }//end of for loop
+        
+    }//covertToItem() ending
     
     
 }

@@ -46,7 +46,7 @@ struct NearestGroceryView: View {
                 
                 //List of locations that will take user to the place they want in Maps
                 HStack{
-                    List{
+                    List(){
                         VStack{
                             Text("\(exampleItem.name)")
                             Text("\(exampleItem.address)")
