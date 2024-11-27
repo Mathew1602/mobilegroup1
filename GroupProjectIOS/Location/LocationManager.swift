@@ -139,6 +139,8 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             
             self.convertToItem()//convert the new stores into item types
             //print(self.groceryStoreItems) //testing
+            //print(getStoreItems()) //testing
+
 
             
         }//end of search start
@@ -147,7 +149,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     
     
     //takes the list of groceries -- the groceryStores list -- and modifies to make it LocationListItem type
-    func convertToItem(){
+    private func convertToItem(){
         for store in groceryStores{
             
             let name = store.name ?? "No Location Name"
@@ -162,6 +164,17 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         }//end of for loop
         
     }//covertToItem() ending
+    
+    //returns grocery story items for the view
+    func getStoreItems() -> [LocationListItem]{
+        
+        //testing if it changes
+//        for groceryStore in groceryStores{
+//            print(groceryStore.name)
+//        }
+        
+        return self.groceryStoreItems;
+    }
     
     
 }

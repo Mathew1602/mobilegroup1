@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LocationListItem{
+public struct LocationListItem : Hashable{
     let name: String
     let address: String
     let carTime : Int //how long in minutes it takes to travel

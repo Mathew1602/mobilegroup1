@@ -14,17 +14,16 @@ struct NearestGroceryView: View {
     
     //camera state objects
     @State var camPosition : MapCameraPosition = .userLocation(fallback:.automatic)
-    @State var currentLocation : CLLocation?
+//    @State var currentLocation : CLLocation?
     
     //to test LocationList Item
-    @State var exampleItem : LocationListItem = LocationListItem(name: "Example Item", address: "123 Example Street", carTime: 24, url: "http://hello.ca")
+    //@State var exampleItem : LocationListItem = LocationListItem(name: "Example Item", address: "123 Example Street", carTime: 24, url: "http://hello.ca")
+//    @State var selectedLocationItem : LocationListItem //chose items in a list later
     
     var body: some View {
         NavigationView{
             VStack{
-                
-                Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                
+                                
                 VStack {
                     //if the map is legal -- (0,0) is null island, but highly unlikely someone would look for grocery near null island
                     //                    if(!(region.center.latitude == 0 && region.center.longitude == 0)){ //add this later
@@ -37,6 +36,7 @@ struct NearestGroceryView: View {
                     //if location changed, so will the region
                     .onChange(of: locationManager.location, initial: true) {
                         camPosition = MapCameraPosition.region(locationManager.region) //this is the zoom level
+                        locationManager.searchStores()
                     }//end of onChange
                     //                        }//end of if for map view
                     
@@ -46,55 +46,37 @@ struct NearestGroceryView: View {
                 
                 //List of locations that will take user to the place they want in Maps
                 HStack{
-                    List(){
+                    
+                    List(locationManager.getStoreItems(), id: \.self){store in
                         VStack{
-                            Text("\(exampleItem.name)")
-                            Text("\(exampleItem.address)")
-                            Text("Time (by car): \(exampleItem.carTime)")
-                        }
+                            Text("\(store.name)").bold()
+                            Text("\(store.address)")
+                            Text("Time (by car): \(store.carTimeString())")
+                            Text("\(store.url)")
+                            
+                            HStack{
+                                Button("Directions"){
+                                    //go to apple maps or google maps
+                                }
+                            }.frame(maxWidth: .infinity, alignment: .trailing)//end ofHSTack
+                                .background(.blue)
+                            
                         
-                        Button("Directions"){
-                            //will go to google maps or apple maps
-                        }
+                        }.frame(maxWidth: .infinity, alignment: .leading) //end of VStack
                         
-                        
-                        //                        //for the locations in a given search, grab the first three, show here /fix this later
-                        //                        ForEach(locationManager.groceryStores) { food in
-                        ////                            Text("\(groceryStore.description)")
-                        //                        }
-                        
-                    }//end of list
-                    
-                    
-                    Button("Test"){
-                        if
-                            CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
-                                CLLocationManager.authorizationStatus() ==  .authorizedAlways
-                        {
-                            currentLocation = locationManager.location!
-                            //                            print("\(currentLocation!.coordinate.longitude)")
-                            //                            print("CAM: \(camPosition)")
-                        }
-                        
-                        //testing search function
-                        print(locationManager.searchStores())
-                        
-                        
-                        
-                        
-                        
-                        
-                    }//end of HSTACK
+                    }//list end
                     
                 }//end of map
             }//end of outer vStack
+            .navigationTitle("Nearest Grocery Store")
             
             
         }.onAppear()
         {
-            //            camPosition = MapCameraPosition.region(region) //this is the zoom level
             //do the map search, ask for permissions here
-        }.navigationTitle("Nearest Grocery Store")
+            locationManager.searchStores() //for the first time
+
+        }
         
     }
 }
