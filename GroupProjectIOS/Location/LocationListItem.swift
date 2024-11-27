@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import MapKit
 
-public struct LocationListItem : Hashable, Identifiable{
+public struct LocationListItem : Identifiable{
     public var id = UUID()
     
     let name: String
     let address: String
+    let coordinate : CLLocationCoordinate2D //used for marker in map
     let carTime : Int //how long in minutes it takes to travel
     let url : String //url for the google maps link to this location
     

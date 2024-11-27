@@ -146,9 +146,8 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                     //print(self.groceryStoreItems) //testing
                     //print(getStoreItems()) //testing
                 }
-                catch{
-                    print("Error: Could not convert items \(error)")
-                }
+                //catch is unreachable
+                
             }//end of Task
        
 
@@ -206,11 +205,13 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             
             let name = store.name ?? "No Location Name"
             let address = ("\(store.placemark.subThoroughfare ?? "No Street Number") \(store.placemark.thoroughfare ?? "No Street")")
+            let coordinate = store.placemark.coordinate
+
 //            let time = 0;
             let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)") //TODO: When you make the route display, you'll also get the time
             let url = "comgooglemaps://?daddr=48.8566,2.3522)&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
             
-            let item = LocationListItem(name: name, address: address, carTime: time, url: url)
+            let item = LocationListItem(name: name, address: address, coordinate: coordinate, carTime: time, url: url)
             
             DispatchQueue.main.sync {
                 self.groceryStoreItems.append(item)
