@@ -18,14 +18,14 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     @Published var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude:43.4561, longitude:-79.7000),//center -> should technically be user, but for sake in purpose is this
         span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1) //span in this case is how much is the barrier between your location and the other to be searched locations
-        )
+    )
     
     @Published var groceryStores: [MKMapItem] = [] //does this have to be published?
     @Published var mkRoute : MKRoute?
     
     //for convertToItem()
     @Published var groceryStoreItems : [LocationListItem] = []
-
+    
     let manager = CLLocationManager()
     
     override init(){
@@ -68,7 +68,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error: \(error)")
     }
-
+    
     //deals with changes in authorization
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch(manager.authorizationStatus){
@@ -90,20 +90,20 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             print("restricted")
             break
             
-          default:
+        default:
             break
         }
         
     }
-
+    
     /*
-     ADDITIONAL METHODS
+    CUSTOM METHODS
      */
     
     //what the view calls to search for stores. It searches for stores and adds the results to the variable
     func searchStores() async{
         var storeItems : [MKMapItem] = []
-
+        
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = "grocery store"
         request.region = region //makes the search specific to the region
@@ -120,20 +120,20 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             
             
             /*
-            //Test stuff:
-            print("\(storeItems[0].placemark)") // gives you a MKMapItem response
-            print(storeItems[0].placemark.thoroughfare)
-            print(storeItems[0].placemark.subThoroughfare)
-
-            //https://developer.apple.com/documentation/swift/string/split(separator:maxsplits:omittingemptysubsequences:) - string seperator into an array
-           
+             //Test stuff:
+             print("\(storeItems[0].placemark)") // gives you a MKMapItem response
+             print(storeItems[0].placemark.thoroughfare)
+             print(storeItems[0].placemark.subThoroughfare)
+             
+             //https://developer.apple.com/documentation/swift/string/split(separator:maxsplits:omittingemptysubsequences:) - string seperator into an array
+             
              MKMapItem: 0x1048f9cb0> {
-                 isCurrentLocation = 0;
-                 name = Safeway;
-                 phoneNumber = "+1 (408) 253-0112";
-                 placemark = "Safeway, 20620 W Homestead Rd, Cupertino, CA 95014, United States @ <+37.33616270,-122.03470590> +/- 0.00m, region CLCircularRegion (identifier:'<+37.33616271,-122.03470590> radius 141.17', center:<+37.33616271,-122.03470590>, radius:141.17m)";
-                 timeZone = "America/Los_Angeles (PST) offset -28800";
-                 url = "https://local.safeway.com/safeway/ca/cupertino/20620-w-homestead-rd.html";
+             isCurrentLocation = 0;
+             name = Safeway;
+             phoneNumber = "+1 (408) 253-0112";
+             placemark = "Safeway, 20620 W Homestead Rd, Cupertino, CA 95014, United States @ <+37.33616270,-122.03470590> +/- 0.00m, region CLCircularRegion (identifier:'<+37.33616271,-122.03470590> radius 141.17', center:<+37.33616271,-122.03470590>, radius:141.17m)";
+             timeZone = "America/Los_Angeles (PST) offset -28800";
+             url = "https://local.safeway.com/safeway/ca/cupertino/20620-w-homestead-rd.html";
              }
              */
             
@@ -149,19 +149,19 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 //catch is unreachable
                 
             }//end of Task
-       
-
+            
+            
         }//end of search start
         
-    }//end of searchLocation
+    }//end of searchStores
     
     func getCarTimeRoute(storeNameAddress : String) async -> Int{
         var time = -1
-
+        
         do{
             let geoCoder = CLGeocoder()
             let result = try await geoCoder.geocodeAddressString(storeNameAddress) //gets the store location in geocoder
-
+            
             if let placemarker = result.first{
                 let request = MKDirections.Request()
                 request.source = MKMapItem(placemark: .init(coordinate: location!.coordinate))
@@ -170,10 +170,10 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 
                 let response = try await MKDirections(request: request).calculateETA()
                 time = Int(response.expectedTravelTime / 60) //convert the expected travel time from seconds to minutes
-                print("\(time) minutes for store \(storeNameAddress)")
+                //                print("\(time) minutes for store \(storeNameAddress)") //testing for times
                 
             }//end of placemaker
-                        
+            
         }catch{
             print("Error, cannot find car route time: \(error)")
         }
@@ -183,16 +183,16 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     }//end of getCarTimeRoute
     
     
-    func getRoute(){        
+    func getRoute(){
         /*calculate the route in a different method -- on specific place selected
-//                mkRoute = res.routes.first //basically setting the route
-//
-//                if let route = res.routes.first{ //you'll find several routes
-//                    for step in route.steps{
-//                        print(step.instructions)
-//                        routeSteps.append(RouteStep(step: step.instructions)) //add it to list of steps, in a list
-//                    }//end of for step in route
-//                } */
+         //                mkRoute = res.routes.first //basically setting the route
+         //
+         //                if let route = res.routes.first{ //you'll find several routes
+         //                    for step in route.steps{
+         //                        print(step.instructions)
+         //                        routeSteps.append(RouteStep(step: step.instructions)) //add it to list of steps, in a list
+         //                    }//end of for step in route
+         //                } */
     }//end of getRoute()
     
     /*
@@ -201,35 +201,42 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     
     //takes the list of groceries -- the groceryStores list -- and modifies to make it LocationListItem type
     private func convertToItem() async{
+        
+        var convertedList : [LocationListItem] = [] //used in the for loop
+        
         for store in groceryStores{
             
             let name = store.name ?? "No Location Name"
             let address = ("\(store.placemark.subThoroughfare ?? "No Street Number") \(store.placemark.thoroughfare ?? "No Street")")
             let coordinate = store.placemark.coordinate
-
-//            let time = 0;
-            let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)") //TODO: When you make the route display, you'll also get the time
+            
+            //let time = 0;
+            let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)")
             let url = "comgooglemaps://?daddr=48.8566,2.3522)&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
             
             let item = LocationListItem(name: name, address: address, coordinate: coordinate, carTime: time, url: url)
             
-            DispatchQueue.main.sync {
-                self.groceryStoreItems.append(item)
-            }
+                convertedList.append(item)
+            
+            
         }//end of for loop
         
-    }//covertToItem() ending
-    
-    //returns grocery story items for the view
-    func getStoreItems() -> [LocationListItem]{
+        DispatchQueue.main.sync {
+            self.groceryStoreItems = convertedList //change grocery store items to converted list
+        }
+            
+        }//covertToItem() ending
         
-        //testing if it changes
-//        for groceryStore in groceryStores{
-//            print(groceryStore.name)
-//        }
+        //returns grocery story items for the view
+        func getStoreItems() -> [LocationListItem]{
+            
+            //testing if it changes
+            //        for groceryStore in groceryStores{
+            //            print(groceryStore.name)
+            //        }
+            
+            return self.groceryStoreItems;
+        }
         
-        return self.groceryStoreItems;
-    }
-    
-    
-}//end of location manager
+        
+    }//end of location manager

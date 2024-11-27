@@ -8,10 +8,8 @@ struct NearestGroceryView: View {
     
     //camera state objects
     @State var camPosition : MapCameraPosition = .userLocation(fallback:.automatic)
-//    @State var currentLocation : CLLocation?
+    @State var currentLocation : CLLocation?
     
-    //to test LocationList Item
-    //@State var exampleItem : LocationListItem = LocationListItem(name: "Example Item", address: "123 Example Street", carTime: 24, url: "http://hello.ca")
     @State var selectedLocationItem : LocationListItem? //chose items in a list later
     
     
@@ -19,7 +17,7 @@ struct NearestGroceryView: View {
     var body: some View {
         NavigationView{
             VStack{
-                                
+                
                 VStack{
                     //if the map is legal -- (0,0) is null island, but highly unlikely someone would look for grocery near null island
                     //                    if(!(region.center.latitude == 0 && region.center.longitude == 0)){ //add this later
@@ -38,16 +36,21 @@ struct NearestGroceryView: View {
                     
                     //if location changed, so will the region
                     .onChange(of: locationManager.location, initial: true) {
-                        Task{
-                            do{
-                            
-                                camPosition = MapCameraPosition.region(locationManager.region) //this is the zoom level
-                                await locationManager.searchStores()
-
-                            }
-                            //catch is unreachable
-                            
-                        }//end of task
+                        
+                        //if the location has changed; stops multiple calls on reloading the screen
+                        if(currentLocation != locationManager.location){
+                            Task{
+                                do{
+                                    camPosition = MapCameraPosition.region(locationManager.region) //this is the zoom level
+                                    await locationManager.searchStores()
+                                    
+                                    currentLocation = locationManager.location //sets the currentlocation
+                                }
+                                //catch is unreachable
+                                
+                            }//end of task
+                        }
+                        
                     }//end of onChange
                     //}//end of if for map view
                     
@@ -80,33 +83,25 @@ struct NearestGroceryView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10)) // Make the whole row tappable
                         .onTapGesture {
                             selectedLocationItem = store
-//                            print("Selected Location Item: \(store.name)") //location item grabbed test
+                            //                            print("Selected Location Item: \(store.name)") //location item grabbed test
                             //TODO: Make the route appear and the location pin
-                             //make location pin based on address of that store
-                        
-                             //call getRoute()
-                             
+                            //make location pin based on address of that store
+                            
+                            //call getRoute()
+                            
                             
                             
                             
                         }
                 }//end of list
-                    
+                
             }//end of outer vStack
             .navigationTitle("Nearest Grocery Store")
             
-            
-        }.onAppear() //end of navstack
-        {
-            Task{
-                do{
-                    //do the map search, ask for permissions here
-                    await locationManager.searchStores() //for the first time
-                }
-                //catch is unreachable
-            }//end of Task
+        }.onAppear(){
             
         }
+            
         
     }
 }
