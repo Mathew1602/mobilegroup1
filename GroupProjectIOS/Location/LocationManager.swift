@@ -144,7 +144,6 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 do{
                     await self.convertToItem()//convert the new stores into item types
                     //print(self.groceryStoreItems) //testing
-                    print("PRINT - TESTING GET STORE ITEM: \(self.getStoreItems()[0])") //testing
                 }
                 //catch is unreachable
                 
@@ -231,7 +230,16 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         
         var convertedList : [LocationListItem] = [] //used in the for loop
         
-        for store in groceryStores{
+//        for store in groceryStores{
+            for i in 0...2{ //continue this logic to the conversion
+
+            let store = groceryStores[i]
+                        
+//            if(!groceryStores.isEmpty){
+//                for i in 0...2{ //continue this logic to the conversion
+//                    var store = groceryStore[i]
+//                
+//            }
             
             let name = store.name ?? "No Location Name"
             let address = ("\(store.placemark.subThoroughfare ?? "No Street Number") \(store.placemark.thoroughfare ?? "No Street")")
@@ -257,12 +265,15 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         //returns grocery story items for the view
         func getStoreItems() -> [LocationListItem]{
             
-            //testing if it changes
-            //        for groceryStore in groceryStores{
-            //            print(groceryStore.name)
-            //        }
+//            var smallList : [LocationListItem] = [] //something works.. as rudimentary ..
+//            
+//            if(!groceryStoreItems.isEmpty){
+//                for i in 0...2{
+//                    smallList.append(self.groceryStoreItems[i])
+//                }
+//            }
             
-            return self.groceryStoreItems;
+            return self.groceryStoreItems
         }
         
         
