@@ -14,8 +14,6 @@ struct NearestGroceryView: View {
     
     //route
     @State var mkRoute : MKRoute? //this is set in getRoute
-
-    
     
     var body: some View {
         NavigationView{

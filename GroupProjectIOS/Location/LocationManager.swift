@@ -26,7 +26,11 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     //for convertToItem()
     @Published var groceryStoreItems : [LocationListItem] = []
     
+    
     let manager = CLLocationManager()
+    
+    //Counter system
+    let counter = RouteRequestCounter()
     
     override init(){
         self.location = CLLocation()
@@ -42,7 +46,6 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         manager.requestLocation()//grab location from user
         
         manager.startUpdatingLocation() //this tells the application to check if locations' been updated
-        
     }
     
     //these are from the delegate -- we add the last bits of the implementation
@@ -73,11 +76,11 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch(manager.authorizationStatus){
         case .authorizedAlways:
-            print("location service always enabled")
+            print("Location service always enabled")
             break
             
         case .authorizedWhenInUse:
-            print("location service authorized only in use")
+            print("Location service authorized only in use")
             break
             
             //this is default when app starts, .notDetermined
@@ -87,7 +90,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             break
             
         case .restricted: //meaning user can't change; i.e. company phone
-            print("restricted")
+            print("Restricted")
             break
             
         default:
@@ -101,7 +104,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
      */
     
     //what the view calls to search for stores. It searches for stores and adds the results to the variable
-    func searchStores() async{
+    func searchStores() async {
         var storeItems : [MKMapItem] = []
         
         let request = MKLocalSearch.Request()
@@ -115,6 +118,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 self.groceryStores = []
                 return
             }
+            
             print("\(res.mapItems.count) stores found")
             storeItems = res.mapItems
             
@@ -158,6 +162,11 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         var time = -1
         
         do{
+            guard self.counter.addCounter() == 1 else {
+                print("Add counter in getCarTimeRoute(); currently full")
+                throw LocationErrors.overRequestCounter(message: "Add counter in getCarTimeRoute(); currently full")
+            }
+            
             let geoCoder = CLGeocoder()
             let result = try await geoCoder.geocodeAddressString(storeNameAddress) //gets the store location in geocoder
             
@@ -169,6 +178,8 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
                 print("IN GET TIME ROUTE \(request)")
                 
                 let response = try await MKDirections(request: request).calculateETA()
+                
+                
                 time = Int(response.expectedTravelTime / 60) //convert the expected travel time from seconds to minutes
                 //                print("\(time) minutes for store \(storeNameAddress)") //testing for times
                 
@@ -188,9 +199,15 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         
         Task{
             do{
+                //addCounter(). If it does not work then stop making requests to the geocoder
+                guard self.counter.addCounter() == 1 else {
+                    print("Add counter in getRoute(); currently full")
+                    throw LocationErrors.overRequestCounter(message: "Add counter in getRoute(); currently full") 
+                }
+                
                 let geoCoder = CLGeocoder()
                 let result = try await geoCoder.geocodeAddressString(storeNameAddress) //gets the store location in geocoder
-                
+               
                 if let placemarker = result.first{
                     let request = MKDirections.Request()
                     request.source = MKMapItem(placemark: .init(coordinate: location!.coordinate))
@@ -246,6 +263,8 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             let coordinate = store.placemark.coordinate
             
             //let time = 0;
+                
+                //note: time and url will add request to request counter
             let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)")
             let url = "comgooglemaps://?daddr=\(store.placemark.coordinate.latitude),\(store.placemark.coordinate.longitude))&directionsmode=driving&zoom=14&views=traffic" //based on https://medium.com/swift-productions/launch-google-to-show-route-swift-580aca80cf88 ; TODO: Add exact link for that specific store
             
