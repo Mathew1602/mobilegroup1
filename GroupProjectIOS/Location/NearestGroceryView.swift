@@ -41,12 +41,10 @@ struct NearestGroceryView: View {
                         
                         //ROUTES
                         if let route = mkRoute{
-                            withAnimation{
-                                MapPolyline(route.polyline)
-                                    .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
-                            }
-                        }//if statement ends
-                        
+                            MapPolyline(route.polyline)
+                                .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
+                        }//end of route
+
                     }//end of map
                     
                     //if location changed, so will the region
@@ -67,7 +65,6 @@ struct NearestGroceryView: View {
                         }
                         
                     }//end of onChange
-                    
                     //}//end of if for map view
                     
                 }//end of map's VStack
@@ -99,15 +96,18 @@ struct NearestGroceryView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10)) // Make the whole row tappable
                         .onTapGesture {
                             selectedLocationItem = store
-                            //                            print("Selected Location Item: \(store.name)") //location item grabbed test
+                            //print("Selected Location Item: \(store.name)") //location item grabbed test
                             
                             Task{
                                 do{
-                                    //TODO: Make the route appear and the location pin
                                     //make location pin based on address of that store
                                     if selectedLocationItem != nil {
                                         showRoute = false
                                         mkRoute = await locationManager.getRoute(store: selectedLocationItem!)
+                                        
+                                        //once set, change camera position
+                                        let rect = mkRoute?.polyline.boundingMapRect
+                                        camPosition = mkRoute != nil ? MapCameraPosition.rect(rect!) : camPosition
                                     }
                                     
                                     print("\(mkRoute ?? MKRoute()) PRINT STATEMENT")
