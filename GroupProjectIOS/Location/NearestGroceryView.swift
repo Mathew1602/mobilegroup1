@@ -108,7 +108,8 @@ struct NearestGroceryView: View {
                                     do{
                                         //make location pin based on address of that store
                                         if selectedLocationItem != nil {
-                                            mkRoute = await locationManager.getRoute(store: selectedLocationItem!)
+//                                            mkRoute = await locationManager.getRoute(store: selectedLocationItem!)
+                                            mkRoute = selectedLocationItem?.route
                                             
                                             //once set, change camera position
                                             let rect = mkRoute?.polyline.boundingMapRect

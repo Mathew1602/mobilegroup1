@@ -14,7 +14,8 @@ public struct LocationListItem : Identifiable{
     let name: String
     let address: String
     let coordinate : CLLocationCoordinate2D //used for marker in map
-    let carTime : Int //how long in minutes it takes to travel    
+    let carTime : Int //how long in minutes it takes to travel
+    let route : MKRoute
     
     func carTimeString() -> String{
         let hours : Int = carTime / 60
