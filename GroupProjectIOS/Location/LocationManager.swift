@@ -57,7 +57,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         }
         
         //everytime the location changes... go to the user's location, most recent one
-        print("\(locations[locations.count-1].coordinate.latitude), \(locations[locations.count-1].coordinate.longitude)")
+        //print("\(locations[locations.count-1].coordinate.latitude), \(locations[locations.count-1].coordinate.longitude)")
         self.location = locations[locations.count-1] //this = publisher variable
         
         //this is connected to view's camera -- will change what is counted in this region
@@ -194,9 +194,31 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     }//end of getCarTimeRoute
     
     
-    func getRoute(storeNameAddress : String) async -> MKRoute{
+    func getRoute(store : LocationListItem) async -> MKRoute{
+        
         var route = MKRoute()
         
+        let request = MKDirections.Request()
+        let sourcePlacemark = MKPlacemark(coordinate: location!.coordinate)
+        let routeSource = MKMapItem(placemark: sourcePlacemark)
+        
+        let destinationPlacemark = MKPlacemark(coordinate: store.coordinate)
+        
+        let routeDestination = MKMapItem(placemark: destinationPlacemark)
+        
+        request.source = routeSource
+        request.destination = routeDestination
+        request.transportType = .automobile
+        
+        let directions = MKDirections(request:request)
+        let result = try? await directions.calculate()
+        route = (result?.routes.first)!
+        let travelInterval = route.expectedTravelTime
+        
+        print("getRoute() route: \(route)")
+       
+       
+        /*
         Task{
             do{
                 //addCounter(). If it does not work then stop making requests to the geocoder
@@ -235,7 +257,9 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
          //                    }//end of for step in route
          //                } */
         
+         */
         return route
+         
     }//end of getRoute()
     
     /*

@@ -13,7 +13,11 @@ struct NearestGroceryView: View {
     @State var selectedLocationItem : LocationListItem? //chose items in a list later
     
     //route
+    @State var selectedPlacemark : LocationListItem?
+    @State private var showRoute = false
     @State var mkRoute : MKRoute? //this is set in getRoute
+    @State private var routeDestination : MKMapItem?
+    
     
     var body: some View {
         NavigationView{
@@ -37,8 +41,10 @@ struct NearestGroceryView: View {
                         
                         //ROUTES
                         if let route = mkRoute{
-                            MapPolyline(route.polyline)
-                                .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
+                            withAnimation{
+                                MapPolyline(route.polyline)
+                                    .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
+                            }
                         }//if statement ends
                         
                     }//end of map
@@ -61,6 +67,7 @@ struct NearestGroceryView: View {
                         }
                         
                     }//end of onChange
+                    
                     //}//end of if for map view
                     
                 }//end of map's VStack
@@ -98,7 +105,11 @@ struct NearestGroceryView: View {
                                 do{
                                     //TODO: Make the route appear and the location pin
                                     //make location pin based on address of that store
-                                    mkRoute = try await locationManager.getRoute(storeNameAddress: "\(store.name) \(store.address)")
+                                    if selectedLocationItem != nil {
+                                        showRoute = false
+                                        mkRoute = await locationManager.getRoute(store: selectedLocationItem!)
+                                    }
+                                    
                                     print("\(mkRoute ?? MKRoute()) PRINT STATEMENT")
                                     
                                     //call getRoute()
