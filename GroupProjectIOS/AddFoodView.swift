@@ -126,16 +126,24 @@ struct AddFoodView: View {
             foodViewModel.uploadImage(image, for: newFood) { imageName in
                 newFood.imageName = imageName
                 foodViewModel.addFood(newFood)
-                resetFields()
-                alertMessage = "\(name) is saved successfully!"
-                showAlert = true
+                DispatchQueue.main.async {
+                    resetFields()
+                    alertMessage = "\(newFood.name) is saved successfully!"
+                    showAlert = true
+                    print("Saved food: \(newFood.name)")
+                }
             }
         } else {
-            resetFields()
-            alertMessage = "\(name) is saved successfully!"
-            showAlert = true
+            foodViewModel.addFood(newFood)
+            DispatchQueue.main.async {
+                resetFields()
+                alertMessage = "\(newFood.name) is saved successfully!"
+                showAlert = true
+                print("Saved food: \(newFood.name)")
+            }
         }
     }
+
     
     func resetFields() {
         name = ""

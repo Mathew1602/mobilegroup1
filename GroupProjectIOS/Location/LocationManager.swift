@@ -183,15 +183,18 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
     }//end of getCarTimeRoute
     
     
-    func getRoute(store : LocationListItem) async -> MKRoute{
-        
+//    func getRoute(store : LocationListItem) async -> MKRoute{
+    func getRoute(store : MKMapItem) async -> MKRoute{
+            
         var route = MKRoute()
         
         let request = MKDirections.Request()
         let sourcePlacemark = MKPlacemark(coordinate: location!.coordinate)
         let routeSource = MKMapItem(placemark: sourcePlacemark)
         
-        let destinationPlacemark = MKPlacemark(coordinate: store.coordinate)
+//        let destinationPlacemark = MKPlacemark(coordinate: store.coordinate) //old
+        let destinationPlacemark = MKPlacemark(coordinate: store.placemark.coordinate)
+
         
         let routeDestination = MKMapItem(placemark: destinationPlacemark)
         
@@ -229,8 +232,12 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
             let coordinate = store.placemark.coordinate
             
             let time = await getCarTimeRoute(storeNameAddress: "\(name) \(address)")
+                
+            let route = await getRoute(store: store)
             
-            let item = LocationListItem(name: name, address: address, coordinate: coordinate, carTime: time)
+            //let item = LocationListItem(name: name, address: address, coordinate: coordinate, carTime: time)
+                let item = LocationListItem(name: name, address: address, coordinate: coordinate, carTime: time, route: route)
+
             
             convertedList.append(item)
             
