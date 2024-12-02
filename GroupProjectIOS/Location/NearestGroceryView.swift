@@ -1,3 +1,9 @@
+//
+//  NearestGroceryView.swift
+//  GroupProjectIOS
+//
+//  Created by Audrey Man on 2024-11-11
+//
 
 import SwiftUI
 import MapKit
@@ -24,16 +30,12 @@ struct NearestGroceryView: View {
             VStack{
                 
                 if(locationManager.locationEnabled){
-                    
-                    
-                    
+                
                     VStack{
-                        //if the map is legal -- (0,0) is null island, but highly unlikely someone would look for grocery near null island
-                        //                    if(!(region.center.latitude == 0 && region.center.longitude == 0)){ //add this later
                         Map(position : $camPosition){
                             
                             //USER
-                            UserAnnotation() //shows you, the user, on the application
+                            UserAnnotation()
                             
                             //LOCATION MARKER
                             //checks if location item exists, if so -- display
@@ -46,14 +48,12 @@ struct NearestGroceryView: View {
                             //ROUTES
                             if let route = mkRoute{
                                 MapPolyline(route.polyline)
-                                    .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
+                                    .stroke(.red, style: StrokeStyle(lineWidth: 5))
                             }//end of route
-                            
                         }//end of map
                         
                         //if location changed, so will the region
                         .onChange(of: locationManager.location, initial: true) {
-                            
                             //if the location has changed; stops multiple calls on reloading the screen
                             if(currentLocation != locationManager.location){
                                 Task{
@@ -62,15 +62,10 @@ struct NearestGroceryView: View {
                                         await locationManager.searchStores()
                                         
                                         currentLocation = locationManager.location //sets the currentlocation
-                                    }
-                                    //catch is unreachable
-                                    
+                                    }//end of do
                                 }//end of task
-                            }
-                            
+                            }//end of if currentLocation
                         }//end of onChange
-                        //}//end of if for map view
-                        
                     }//end of map's VStack
                     .aspectRatio(1.0, contentMode: .fit)
                     .border(.black)
@@ -81,7 +76,7 @@ struct NearestGroceryView: View {
                             Text("Loading grocery stores...")
                         }
                         .padding(20)
-                    }
+                    }//if statement ending
                     
                     //List of locations that will take user to the place they want in Maps
                     List(locationManager.getStoreItems(), id: \.id){store in
@@ -90,28 +85,21 @@ struct NearestGroceryView: View {
                                 Text("\(store.name)").bold()
                                 Text("\(store.address)")
                                 Text("\(store.carTimeString())")
-                                //Text("\(store.url)") //this was for testing
                             }
                             
                             Spacer()
                             
                             Button("Directions"){
-                                print("Button pressed!")
-                                //go to apple maps or google maps
-                                
-                                MKMapItem(placemark: MKPlacemark(coordinate: store.coordinate)).openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
-                                //openInMaps(launchOptions: [.directions: true], location: store)
-                                //openInMaps
-                                
+                                MKMapItem(placemark: MKPlacemark(coordinate: store.coordinate)).openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])//goes to apple maps on click
                             }
                             .padding(8)
                             .background(Color.blue)
-                            .foregroundColor(.orange)
+                            .foregroundColor(.white)
                             .cornerRadius(8)
                             
-                            
                         }.frame(maxWidth: .infinity, alignment: .leading) //end of VStack
-                            .contentShape(RoundedRectangle(cornerRadius: 10)) // Make the whole row tappable
+                            .contentShape(RoundedRectangle(cornerRadius: 10)) // make the whole row tappable
+                        
                             .onTapGesture {
                                 selectedLocationItem = store
                                 //print("Selected Location Item: \(store.name)") //location item grabbed test
@@ -120,29 +108,23 @@ struct NearestGroceryView: View {
                                     do{
                                         //make location pin based on address of that store
                                         if selectedLocationItem != nil {
-                                            showRoute = false
                                             mkRoute = await locationManager.getRoute(store: selectedLocationItem!)
                                             
                                             //once set, change camera position
                                             let rect = mkRoute?.polyline.boundingMapRect
-                                            camPosition = (mkRoute != nil ? MapCameraPosition.rect(rect!) : camPosition)
+                                            camPosition = (mkRoute != nil ? MapCameraPosition.rect(rect!) : .userLocation(fallback: .automatic))
                                         }
                                         
-                                        print("\(mkRoute ?? MKRoute()) PRINT STATEMENT")
+                                        //print("\(mkRoute ?? MKRoute()) Print statement") //test for mkRoute
                                         
-                                        //call getRoute()
                                     }//end of do
-                                    catch{
-                                        print("Error: Problem getting route from getRoute(): \(error)")
-                                    }//end of catch
-                                    
                                 }//end of task
                             }//end of ontapgesture
                     }//end of list
-                    
                 }//end of if location enabled statement
                 
                 else{
+                    
                     //used Xiaoya's icon for not-found
                     Image("not-found")
                         .resizable()
@@ -153,8 +135,7 @@ struct NearestGroceryView: View {
                     Text("Please enable location services to see the nearest grocery store")
                         .bold()
                         .multilineTextAlignment(.center)
-                        //.frame(maxWidth: .infinity, alignment: .center)
-                }
+                }//end of else
                     
             }//end of outer vStack
             .navigationTitle("Nearest Grocery Store")
