@@ -20,12 +20,14 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1) //span in this case is how much is the barrier between your location and the other to be searched locations
     )
     
-    @Published var groceryStores: [MKMapItem] = [] //does this have to be published?
     @Published var mkRoute : MKRoute?
+    
+    private var groceryStores: [MKMapItem] = []
     
     //for convertToItem()
     @Published var groceryStoreItems : [LocationListItem] = []
     
+    @Published var locationEnabled = false
     
     let manager = CLLocationManager()
     
@@ -77,23 +79,24 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate{
         switch(manager.authorizationStatus){
         case .authorizedAlways:
             print("Location service always enabled")
+            locationEnabled = true
             break
             
         case .authorizedWhenInUse:
             print("Location service authorized only in use")
+            locationEnabled = true
             break
             
             //this is default when app starts, .notDetermined
         case .notDetermined:
             print("Location undetermined")
+            locationEnabled = false
+
             manager.requestWhenInUseAuthorization() //ask for authorization
             break
-            
-        case .restricted: //meaning user can't change; i.e. company phone
-            print("Restricted")
-            break
-            
+        
         default:
+            locationEnabled = false
             break
         }
         
