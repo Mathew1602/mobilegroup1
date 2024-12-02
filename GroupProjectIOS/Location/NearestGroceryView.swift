@@ -44,7 +44,7 @@ struct NearestGroceryView: View {
                             MapPolyline(route.polyline)
                                 .stroke(Color.red, style: StrokeStyle(lineWidth: 2))
                         }//end of route
-
+                        
                     }//end of map
                     
                     //if location changed, so will the region
@@ -70,6 +70,14 @@ struct NearestGroceryView: View {
                 }//end of map's VStack
                 .aspectRatio(1.0, contentMode: .fit)
                 .border(.black)
+                
+                if(locationManager.groceryStoreItems.isEmpty){
+                    VStack{
+                        ProgressView()
+                        Text("Loading grocery stores...")
+                    }
+                    .padding(20)
+                }
                 
                 //List of locations that will take user to the place they want in Maps
                 List(locationManager.getStoreItems(), id: \.id){store in
@@ -107,7 +115,7 @@ struct NearestGroceryView: View {
                                         
                                         //once set, change camera position
                                         let rect = mkRoute?.polyline.boundingMapRect
-                                        camPosition = mkRoute != nil ? MapCameraPosition.rect(rect!) : camPosition
+                                        camPosition = (mkRoute != nil ? MapCameraPosition.rect(rect!) : camPosition)
                                     }
                                     
                                     print("\(mkRoute ?? MKRoute()) PRINT STATEMENT")
@@ -125,10 +133,6 @@ struct NearestGroceryView: View {
             }//end of outer vStack
             .navigationTitle("Nearest Grocery Store")
             
-        }.onAppear(){
-            
         }
-            
-        
     }
 }
